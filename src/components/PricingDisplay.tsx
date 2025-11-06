@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Check, Zap } from 'lucide-react';
 import type { PricingTier } from '../types';
 
