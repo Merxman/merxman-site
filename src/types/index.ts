@@ -73,6 +73,8 @@ export type SubscriptionStatus =
 
 export interface FormData {
   userId?: string;
+  customerName: string;
+  customerEmail: string;
   productName: string;
   targetAudience: string;
   videoStyle: VideoStyle;

@@ -27,6 +27,8 @@ const DURATIONS = [
 
 export default function VideoForm({ onSubmitSuccess, userId }: VideoFormProps) {
   const [formData, setFormData] = useState<VideoFormData>({
+    customerName: '',
+    customerEmail: '',
     productName: '',
     targetAudience: '',
     videoStyle: 'corporate',
@@ -45,19 +47,61 @@ export default function VideoForm({ onSubmitSuccess, userId }: VideoFormProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await apiClient.submitForm({
-        ...formData,
-        userId: userId || undefined
+      // Sähköpostin validointi
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.customerEmail)) {
+        setError('Anna kelvollinen sähköpostiosoite.');
+        return;
+      }
+
+      // Make.com webhook URL - korvaa oikealla URL:llä
+      const WEBHOOK_URL = 'https://hook.eu1.make.com/XXXXXXXYOUR_WEBHOOK_IDXXXXXXXXX';
+      
+      // Valmistellaan data webhookille
+      const webhookData = {
+        timestamp: new Date().toISOString(),
+        request_id: `mx-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        customer_info: {
+          name: formData.customerName,
+          email: formData.customerEmail,
+          user_id: userId || null,
+        },
+        product_info: {
+          product_name: formData.productName,
+          target_audience: formData.targetAudience,
+          video_style: formData.videoStyle,
+          duration_seconds: formData.duration,
+          key_message: formData.keyMessage,
+          call_to_action: formData.callToAction || '',
+          brand_colors: formData.brandColors || [],
+        },
+        metadata: {
+          form_version: '2.0',
+          source: 'merxman-video-form',
+          user_agent: navigator.userAgent,
+          language: 'fi',
+          ip_address: '' // Lisätään backendissä jos tarpeen
+        }
+      };
+
+      // Lähetä webhook Make.com:lle
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookData)
       });
 
-      if (response.success && response.data) {
-        onSubmitSuccess(response.data.request_id);
+      if (response.ok) {
+        onSubmitSuccess(webhookData.request_id);
       } else {
-        setError(response.error || 'Video creation failed');
+        const errorData = await response.text();
+        throw new Error(`Webhook failed: ${response.status} - ${errorData}`);
       }
     } catch (err) {
-      setError('Error sending video. Please try again.');
-      console.error(err);
+      console.error('Webhook error:', err);
+      setError('Lomakkeen lähetys epäonnistui. Tarkista verkkoyhteys ja yritä uudelleen.');
     } finally {
       setIsSubmitting(false);
     }
@@ -87,6 +131,40 @@ export default function VideoForm({ onSubmitSuccess, userId }: VideoFormProps) {
         )}
 
         <div className="space-y-6">
+          {/* Customer Name */}
+          <div>
+            <label htmlFor="customerName" className="block text-sm font-medium text-gray-700 mb-2">
+              Name *
+            </label>
+            <input
+              type="text"
+              id="customerName"
+              name="customerName"
+              required
+              value={formData.customerName}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="Your full name"
+            />
+          </div>
+
+          {/* Customer Email */}
+          <div>
+            <label htmlFor="customerEmail" className="block text-sm font-medium text-gray-700 mb-2">
+              Email *
+            </label>
+            <input
+              type="email"
+              id="customerEmail"
+              name="customerEmail"
+              required
+              value={formData.customerEmail}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="your@email.com"
+            />
+          </div>
+
           {/* Product Name */}
           <div>
             <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-2">
