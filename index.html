@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merxman AI-Video Automation Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'merxman-blue': '#2563eb',
+                        'merxman-dark': '#1e40af',
+                        'merxman-light': '#dbeafe'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .carrd-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .status-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .processing-steps {
+            transition: all 0.3s ease;
+        }
+        
+        .step-active {
+            color: #2563eb;
+            font-weight: 600;
+        }
+        
+        .step-completed {
+            color: #10b981;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <header class="bg-white/10 backdrop-blur-sm border-b border-white/20">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-merxman-blue rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">M</span>
+                    </div>
+                    <div>
+                        <h1 class="text-white text-xl font-bold">Merxman AI-Video</h1>
+                        <p class="text-white/80 text-sm">Automation Demo</p>
+                    </div>
+                </div>
+                <button class="bg-merxman-blue hover:bg-merxman-dark text-white px-6 py-2 rounded-lg transition-all duration-200 transform hover:scale-105">
+                    Choose Package Starting at €29/month
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-20 text-center">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 fade-in-up">
+                    Generate Professional 
+                    <span class="text-yellow-300">Videos</span>
+                    with AI
+                </h2>
+                <p class="text-xl text-white/90 mb-8 fade-in-up">
+                    Test the POC - see how Merxman transforms product videos through automation
+                </p>
+                <div class="fade-in-up">
+                    <button id="scrollToGallery" class="bg-yellow-500 hover:bg-yellow-400 text-gray-800 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 mr-4">
+                        Try Videos - See Ready Examples
+                    </button>
+                    <button id="scrollToForm" class="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200">
+                        Start Automatic Video Creation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Gallery Section -->
+    <section id="gallerySection" class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto text-center">
+                <h3 class="text-4xl font-bold text-white mb-4">Ready-Made Video Gallery</h3>
+                <p class="text-xl text-white/80 mb-12">See how Merxman AI creates professional content automatically</p>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Video 1 -->
+                    <div class="carrd-card rounded-2xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                        <div class="bg-gradient-to-br from-merxman-blue to-merxman-dark rounded-xl aspect-video flex items-center justify-center mb-4 relative overflow-hidden">
+                            <video class="w-full h-full object-cover rounded-xl" controls poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%232563eb'/%3E%3Ccircle cx='160' cy='90' r='30' fill='white'/%3E%3Cpolygon points='150,75 150,105 180,90' fill='%232563eb'/%3E%3C/svg%3E">
+                                <source src="#" type="video/mp4">
+                                Your browser does not support video playback.
+                            </video>
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/10 transition-all duration-200">
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">Product Showcase Video</h4>
+                        <p class="text-gray-600 mb-3">Kitchen reveal - 15s</p>
+                        <div class="flex justify-center space-x-2 text-sm text-gray-500">
+                            <span class="bg-blue-100 px-2 py-1 rounded">HD</span>
+                            <span class="bg-green-100 px-2 py-1 rounded">AI</span>
+                            <span class="bg-yellow-100 px-2 py-1 rounded">Auto</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Video 2 -->
+                    <div class="carrd-card rounded-2xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                        <div class="bg-gradient-to-br from-merxman-blue to-merxman-dark rounded-xl aspect-video flex items-center justify-center mb-4 relative overflow-hidden">
+                            <video class="w-full h-full object-cover rounded-xl" controls poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%232563eb'/%3E%3Crect x='80' y='60' width='160' height='60' fill='white' rx='10'/%3E%3Ctext x='160' y='95' text-anchor='middle' fill='%232563eb' font-size='14' font-weight='bold'%3EBUSINESS%3C/text%3E%3C/svg%3E">
+                                <source src="#" type="video/mp4">
+                                Your browser does not support video playback.
+                            </video>
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/10 transition-all duration-200">
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">Business Video</h4>
+                        <p class="text-gray-600 mb-3">Office reveal - 12s</p>
+                        <div class="flex justify-center space-x-2 text-sm text-gray-500">
+                            <span class="bg-blue-100 px-2 py-1 rounded">4K</span>
+                            <span class="bg-green-100 px-2 py-1 rounded">AI</span>
+                            <span class="bg-purple-100 px-2 py-1 rounded">Pro</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Video 3 -->
+                    <div class="carrd-card rounded-2xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                        <div class="bg-gradient-to-br from-merxman-blue to-merxman-dark rounded-xl aspect-video flex items-center justify-center mb-4 relative overflow-hidden">
+                            <video class="w-full h-full object-cover rounded-xl" controls poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%232563eb'/%3E%3Ccircle cx='160' cy='90' r='40' fill='white'/%3E%3Ccircle cx='150' cy='80' r='8' fill='%232563eb'/%3E%3Ccircle cx='170' cy='80' r='8' fill='%232563eb'/%3E%3Cpath d='M140 100 Q160 110 180 100' stroke='%232563eb' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+                                <source src="#" type="video/mp4">
+                                Your browser does not support video playback.
+                            </video>
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/10 transition-all duration-200">
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">Campaign Video</h4>
+                        <p class="text-gray-600 mb-3">Product reveal - 18s</p>
+                        <div class="flex justify-center space-x-2 text-sm text-gray-500">
+                            <span class="bg-blue-100 px-2 py-1 rounded">HD</span>
+                            <span class="bg-green-100 px-2 py-1 rounded">AI</span>
+                            <span class="bg-pink-100 px-2 py-1 rounded">Viral</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-12">
+                    <button class="bg-merxman-blue hover:bg-merxman-dark text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                        Create Your Own Video Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Form -->
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="carrd-card rounded-3xl p-8 mb-12">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-2 text-center">Video Creation Form</h3>
+                    <p class="text-gray-600 text-center mb-8">Choose settings below - we'll generate the video automatically</p>
+                    
+                    <form id="videoForm" class="space-y-6">
+                        <!-- Person Type -->
+                        <div class="space-y-2">
+                            <label class="text-gray-700 font-semibold">1. Person</label>
+                            <select id="personType" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                <option value="">Choose person type</option>
+                                <option value="mies">Man</option>
+                                <option value="nainen">Woman</option>
+                                <option value="lapsi">Child</option>
+                            </select>
+                        </div>
+
+                        <!-- Environment -->
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-gray-700 font-semibold">2. Environment - Location</label>
+                                <select id="environmentLocation" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                    <option value="">Choose location</option>
+                                    <option value="keittiö">Kitchen</option>
+                                    <option value="olohuone">Living room</option>
+                                    <option value="työpaikka">Office</option>
+                                    <option value="ulkona">Outdoors</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="text-gray-700 font-semibold">2. Environment - Position</label>
+                                <select id="environmentPosition" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                    <option value="">Choose position</option>
+                                    <option value="pöydän_takana">Behind the table</option>
+                                    <option value="seinän_vieressä">Next to the wall</option>
+                                    <option value="ikkunan_alla">Under the window</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Interaction -->
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-gray-700 font-semibold">3. Interaction - Box action</label>
+                                <select id="boxAction" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                    <option value="">Choose action</option>
+                                    <option value="koskettaa">Touch</option>
+                                    <option value="avaa">Open</option>
+                                    <option value="nostaa">Lift</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="text-gray-700 font-semibold">3. Interaction - Reaction</label>
+                                <select id="reaction" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                    <option value="">Choose reaction</option>
+                                    <option value="poksahtaa_auki">Pops open</option>
+                                    <option value="avaantuu">Opens up</option>
+                                    <option value="valahtaa">Falls out</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Product -->
+                        <div class="space-y-2">
+                            <label class="text-gray-700 font-semibold">4. Product</label>
+                            <select id="productCategory" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                <option value="">Choose product category</option>
+                                <option value="keittiön_yleiskone">Kitchen appliance</option>
+                                <option value="työkalu">Tool</option>
+                                <option value="vaate">Clothing</option>
+                                <option value="kirja">Book</option>
+                            </select>
+                        </div>
+
+                        <!-- Effects -->
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-gray-700 font-semibold">5. Effects - Particles</label>
+                                <select id="particles" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                    <option value="">Choose particles</option>
+                                    <option value="konfetit_lentelee">Confetti flying</option>
+                                    <option value="savua näkyy">Smoke visible</option>
+                                    <option value="tähdet">Stars</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="text-gray-700 font-semibold">5. Effects - Finale</label>
+                                <select id="finale" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-merxman-blue focus:border-transparent transition-all duration-200">
+                                    <option value="">Choose finale</option>
+                                    <option value="katsahtaa_kameraan tyytyväisenä">Looks at camera satisfied</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn" class="w-full bg-merxman-blue hover:bg-merxman-dark text-white py-4 px-8 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105">
+                            Create Video Automatically
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Processing Section -->
+    <section id="processingSection" class="hidden py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-2xl mx-auto">
+                <div class="carrd-card rounded-3xl p-8 text-center">
+                    <div class="status-indicator w-20 h-20 bg-merxman-blue rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-10 h-10 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4" id="statusTitle">Generating video...</h3>
+                    <p class="text-gray-600 mb-6" id="statusMessage">Analyzing settings and preparing for creation</p>
+                    
+                    <div class="processing-steps space-y-3">
+                        <div id="step1" class="step-active">✓ Submission successful</div>
+                        <div id="step2" class="text-gray-400">Processing information...</div>
+                        <div id="step3" class="text-gray-400">Creating video...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JSON Display Section -->
+    <section id="jsonSection" class="hidden py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="carrd-card rounded-3xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Generated JSON Prompt</h3>
+                    <p class="text-gray-600 text-center mb-6">This is automatically generated prompt for the video algorithm</p>
+                    
+                    <div class="bg-gray-900 rounded-lg p-6 overflow-x-auto">
+                        <pre id="jsonOutput" class="text-green-400 text-sm"></pre>
+                    </div>
+                    
+                    <div class="flex justify-center mt-6">
+                        <button id="continueBtn" class="bg-merxman-blue hover:bg-merxman-dark text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200">
+                            Continue to Video Creation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Result Section -->
+    <section id="videoSection" class="hidden py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="carrd-card rounded-3xl p-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Video Ready!</h3>
+                        <p class="text-gray-600">Your video is now available for viewing</p>
+                    </div>
+                    
+                    <div class="bg-gray-100 rounded-2xl p-8 text-center mb-8">
+                        <div class="w-32 h-32 bg-gradient-to-br from-merxman-blue to-merxman-dark rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">Product Reveal Video</h4>
+                        <p class="text-gray-600 mb-4">Duration: 15-30 seconds</p>
+                        <button id="watchVideoBtn" class="bg-merxman-blue hover:bg-merxman-dark text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200">
+                            Watch Video
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 text-center">
+                        <div class="bg-white/50 rounded-lg p-4">
+                            <div class="text-2xl font-bold text-merxman-blue">15s</div>
+                            <div class="text-gray-600">Video length</div>
+                        </div>
+                        <div class="bg-white/50 rounded-lg p-4">
+                            <div class="text-2xl font-bold text-merxman-blue">1080p</div>
+                            <div class="text-gray-600">HD Quality</div>
+                        </div>
+                        <div class="bg-white/50 rounded-lg p-4">
+                            <div class="text-2xl font-bold text-merxman-blue">AI</div>
+                            <div class="text-gray-600">AI Generated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricingSection" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto text-center">
+                <h3 class="text-4xl font-bold text-white mb-4">Choose Your Package</h3>
+                <p class="text-xl text-white/80 mb-12">Choose the right package for your business - starting from €29/month</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Starter -->
+                    <div class="bg-merxman-blue rounded-2xl p-6 text-center transform scale-105 border-2 border-yellow-300">
+                        <div class="bg-yellow-300 text-gray-800 px-3 py-1 rounded-full text-xs font-bold mb-2">START HERE</div>
+                        <h4 class="text-xl font-bold text-white mb-2">Starter</h4>
+                        <div class="text-3xl font-bold text-yellow-300 mb-4">29€</div>
+                        <div class="text-white/80 mb-4">10 videos/month</div>
+                        <ul class="text-white text-sm space-y-2 mb-6">
+                            <li>✓ Basic videos</li>
+                            <li>✓ HD quality</li>
+                            <li>✓ Email support</li>
+                            <li>✓ Your logo</li>
+                            <li>✓ Subtitles</li>
+                        </ul>
+                        <button class="w-full bg-yellow-300 hover:bg-yellow-400 text-gray-800 py-2 px-4 rounded-lg font-semibold transition-all duration-200">
+                            Choose Starter
+                        </button>
+                    </div>
+                    
+                    <!-- Professional -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                        <h4 class="text-xl font-bold text-white mb-2">Professional</h4>
+                        <div class="text-3xl font-bold text-yellow-300 mb-4">99€</div>
+                        <div class="text-white/80 mb-4">50 videos/month</div>
+                        <ul class="text-white/70 text-sm space-y-2 mb-6">
+                            <li>✓ Everything in Starter</li>
+                            <li>✓ 4K quality</li>
+                            <li>✓ Branding</li>
+                            <li>✓ Priority support</li>
+                            <li>✓ API access</li>
+                        </ul>
+                        <button class="w-full bg-white/20 hover:bg-white/30 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-200">
+                            Choose Professional
+                        </button>
+                    </div>
+                    
+                    <!-- Business -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                        <h4 class="text-xl font-bold text-white mb-2">Business</h4>
+                        <div class="text-3xl font-bold text-yellow-300 mb-4">299€</div>
+                        <div class="text-white/80 mb-4">200 videos/month</div>
+                        <ul class="text-white/70 text-sm space-y-2 mb-6">
+                            <li>✓ Everything in Professional</li>
+                            <li>✓ API integration</li>
+                            <li>✓ Usage reports</li>
+                            <li>✓ Multiple accounts</li>
+                            <li>✓ Dedicated support</li>
+                        </ul>
+                        <button class="w-full bg-white/20 hover:bg-white/30 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-200">
+                            Choose Business
+                        </button>
+                    </div>
+                    
+                    <!-- Enterprise -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+                        <h4 class="text-xl font-bold text-white mb-2">Enterprise</h4>
+                        <div class="text-3xl font-bold text-yellow-300 mb-4">Kysy hinta</div>
+                        <div class="text-white/80 mb-4">Unlimited</div>
+                        <ul class="text-white/70 text-sm space-y-2 mb-6">
+                            <li>✓ Everything in Business</li>
+                            <li>✓ Enterprise integrations</li>
+                            <li>✓ Dedicated support</li>
+                            <li>✓ SLA guarantees</li>
+                            <li>✓ Custom development</li>
+                        </ul>
+                        <button class="w-full bg-white/20 hover:bg-white/30 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-200">
+                            Contact Us
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white/10 backdrop-blur-sm border-t border-white/20 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-white/80">© 2025 Merxman AI-Video Automation. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Form submission handler
+        document.getElementById('videoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            const requiredFields = ['personType', 'environmentLocation', 'environmentPosition', 'boxAction', 'reaction', 'productCategory', 'particles', 'finale'];
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                const value = document.getElementById(field).value;
+                if (!value) {
+                    document.getElementById(field).classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    document.getElementById(field).classList.remove('border-red-500');
+                }
+            });
+            
+            if (!isValid) {
+                alert('Fill in all fields before creating video');
+                return;
+            }
+            
+            // Hide form and show processing
+            document.getElementById('videoForm').parentElement.parentElement.classList.add('hidden');
+            document.getElementById('processingSection').classList.remove('hidden');
+            
+            // Start processing simulation
+            startProcessing();
+        });
+        
+        function startProcessing() {
+            let step = 1;
+            
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('text-gray-400');
+                document.getElementById('step2').classList.add('step-active');
+                document.getElementById('statusTitle').textContent = 'Processing information...';
+                document.getElementById('statusMessage').textContent = 'Analyzing settings and preparing for video creation';
+                
+                step = 2;
+            }, 3000);
+            
+            setTimeout(() => {
+                document.getElementById('step3').classList.remove('text-gray-400');
+                document.getElementById('step3').classList.add('step-completed');
+                document.getElementById('step2').classList.remove('step-active');
+                document.getElementById('step2').classList.add('step-completed');
+                document.getElementById('statusTitle').textContent = 'Creating video...';
+                document.getElementById('statusMessage').textContent = 'AI is creating video based on your settings';
+                
+                step = 3;
+            }, 5000);
+            
+            setTimeout(() => {
+                showJsonOutput();
+            }, 8000);
+        }
+        
+        function showJsonOutput() {
+            document.getElementById('processingSection').classList.add('hidden');
+            document.getElementById('jsonSection').classList.remove('hidden');
+            
+            // Generate JSON prompt
+            const formData = {
+                task: "product_reveal",
+                hero: {
+                    type: "person",
+                    description: document.getElementById('personType').value
+                },
+                props: {
+                    box: {
+                        type: "box",
+                        position: document.getElementById('environmentPosition').value.replace('_', ' '),
+                        interaction: document.getElementById('boxAction').value
+                    },
+                    product: {
+                        type: document.getElementById('productCategory').value.replace('_', ' '),
+                        reveal: "revealed from box"
+                    }
+                },
+                environment: {
+                    location: document.getElementById('environmentLocation').value,
+                    position: document.getElementById('environmentPosition').value
+                },
+                effects: {
+                    explosion: document.getElementById('reaction').value.replace('_', ' '),
+                    particles: document.getElementById('particles').value,
+                    finale: document.getElementById('finale').value
+                }
+            };
+            
+            document.getElementById('jsonOutput').textContent = JSON.stringify(formData, null, 2);
+        }
+        
+        // Continue to video result
+        document.getElementById('continueBtn').addEventListener('click', function() {
+            document.getElementById('jsonSection').classList.add('hidden');
+            document.getElementById('videoSection').classList.remove('hidden');
+        });
+        
+        // Video watching simulation
+        document.getElementById('watchVideoBtn').addEventListener('click', function() {
+            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+        });
+        
+        // Smooth scroll to pricing
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Package') || button.textContent.includes('€29/month')) {
+                button.addEventListener('click', function() {
+                    document.getElementById('pricingSection').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+        });
+        
+        // Scroll to gallery section
+        document.getElementById('scrollToGallery').addEventListener('click', function() {
+            document.getElementById('gallerySection').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Scroll to form section  
+        document.getElementById('scrollToForm').addEventListener('click', function() {
+            document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Gallery section buttons
+        document.querySelectorAll('#gallerySection button').forEach(button => {
+            if (button.textContent.includes('Create Your Own Video Now')) {
+                button.addEventListener('click', function() {
+                    document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
