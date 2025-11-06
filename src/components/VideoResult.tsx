@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Download, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { apiClient } from '../lib/api-client';
 import type { VideoStatusResponse } from '../types';
