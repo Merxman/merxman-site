@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
 import type { FormData as VideoFormData, VideoStyle } from '../types';
-import { apiClient } from '../lib/api-client';
 
 interface VideoFormProps {
   onSubmitSuccess: (requestId: string) => void;
