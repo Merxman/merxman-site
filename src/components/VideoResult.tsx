@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Download, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { apiClient } from '../lib/api-client';
 import type { VideoStatusResponse } from '../types';
 
 interface VideoResultProps {
@@ -18,24 +17,15 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
 
     const checkStatus = async () => {
       try {
-        const response = await apiClient.checkVideoStatus(requestId);
-        
-        if (response.success && response.data) {
-          setStatus(response.data);
-          
-          // Stop polling if completed or failed
-          if (response.data.status === 'completed' || response.data.status === 'failed') {
-            setPolling(false);
-            if (intervalId) {
-              clearInterval(intervalId);
-            }
-          }
-        } else {
-          setError(response.error || 'Error checking status');
+        // PLACEHOLDER: Tämä tulee toteuttamaan myöhemmin
+        // Toimii nyt tilapäisesti development-versiona
+        setTimeout(() => {
+          setError('Tilan tarkistus ei ole vielä käytössä. Maksu on vastaanotettu ja video tullaan luomaan pian.');
           setPolling(false);
-        }
+        }, 1000);
+        
       } catch (err) {
-        setError('Error checking status');
+        setError('Virhe tilan tarkistuksessa');
         setPolling(false);
         console.error(err);
       }
@@ -44,17 +34,12 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
     // Initial check
     checkStatus();
 
-    // Poll every 5 seconds if still processing
-    if (polling) {
-      intervalId = setInterval(checkStatus, 5000) as unknown as number;
-    }
-
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
       }
     };
-  }, [requestId, polling]);
+  }, [requestId]);
 
   const getStatusIcon = () => {
     if (!status) return <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />;
@@ -73,19 +58,21 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
   };
 
   const getStatusText = () => {
-    if (!status) return 'Checking status...';
+    if (error) return 'Kiitos maksusta!';
+    
+    if (!status) return 'Tarkistetaan tilaa...';
     
     switch (status.status) {
       case 'completed':
-        return 'Video Ready!';
+        return 'Video valmis!';
       case 'failed':
-        return 'Video creation failed';
+        return 'Videon luominen epäonnistui';
       case 'processing':
-        return 'Creating video...';
+        return 'Luodaan videota...';
       case 'submitted':
-        return 'Job submitted...';
+        return 'Työ vastaanotettu...';
       default:
-        return 'Waiting for processing...';
+        return 'Odotetaan käsittelyä...';
     }
   };
 
@@ -103,8 +90,8 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } catch (err) {
-        console.error('Download failed:', err);
-        alert('Download failed. Please try again.');
+        console.error('Lataus epäonnistui:', err);
+        alert('Lataus epäonnistui. Kokeile uudelleen.');
       }
     }
   };
@@ -114,30 +101,16 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
       <div className="bg-white rounded-lg shadow-lg p-8">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            {getStatusIcon()}
+            {error ? <CheckCircle className="w-12 h-12 text-green-500" /> : getStatusIcon()}
           </div>
 
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {getStatusText()}
           </h2>
 
-          {status?.progress !== undefined && status.progress > 0 && (
-            <div className="mb-4">
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${status.progress}%` }}
-                />
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                {status.progress}% complete
-              </p>
-            </div>
-          )}
-
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800 text-sm">{error}</p>
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm">{error}</p>
             </div>
           )}
 
@@ -149,7 +122,7 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
                   className="w-full h-full"
                   src={status.video_url}
                 >
-                  Your browser does not support video playback.
+                  Selaimesi ei tue videotoistoa.
                 </video>
               </div>
 
@@ -159,7 +132,7 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
                   className="flex-1 py-3 px-6 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <Download className="w-5 h-5" />
-                  Download Video
+                  Lataa Video
                 </button>
 
                 {onReset && (
@@ -167,7 +140,7 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
                     onClick={onReset}
                     className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition-colors"
                   >
-                    Create New Video
+                    Luo Uusi Video
                   </button>
                 )}
               </div>
@@ -177,28 +150,28 @@ export default function VideoResult({ requestId, onReset }: VideoResultProps) {
           {status?.status === 'failed' && (
             <div className="space-y-4">
               <p className="text-gray-600">
-                {status.error || 'Video creation failed. Please try again.'}
+                {status.error || 'Videon luominen epäonnistui. Kokeile uudelleen.'}
               </p>
               {onReset && (
                 <button
                   onClick={onReset}
                   className="py-3 px-6 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors"
                 >
-                  Try Again
+                  Kokeile Uudelleen
                 </button>
               )}
             </div>
           )}
 
-          {polling && (
+          {polling && !error && (
             <p className="text-sm text-gray-500 mt-4">
-              Automatically checking status...
+              Tilan tarkistus käynnissä...
             </p>
           )}
 
           {status?.estimated_completion && (
             <p className="text-sm text-gray-500 mt-2">
-              Estimated completion time: {new Date(status.estimated_completion).toLocaleTimeString('en-US')}
+              Arvioitu valmistumisaika: {new Date(status.estimated_completion).toLocaleTimeString('fi-FI')}
             </p>
           )}
         </div>
